@@ -1,0 +1,564 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+        <script src="digi_data.js"></script>
+        <script>
+            /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "350px";
+            }
+
+            /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+            } 
+        </script>
+
+
+        <center>
+          <h1 class="display-3 text-white bg-dark border-success">DigiDex: Graph Edition</h1>
+        </center>
+        <style type="text/css">
+
+            /* The side navigation menu */
+            .sidenav {
+            height: 100%; /* 100% Full-height */
+            width: 0; /* 0 width - change this with JavaScript */
+            position: fixed; /* Stay in place */
+            z-index: 10; /* Stay on top */
+            top: 0; /* Stay at the top */
+            right: 0;
+            background-color: #111; /* Black*/
+            overflow-x: hidden; /* Disable horizontal scroll */
+            padding-top: 60px; /* Place content 60px from the top */
+            transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+            }
+
+            /* The navigation menu links */
+            .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+            }
+
+            /* When you mouse over the navigation links, change their color */
+            .sidenav a:hover {
+            color: #f1f1f1;
+            }
+
+            /* Position and style the close button (top right corner) */
+            .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            left: 25px;
+            font-size: 36px;
+            margin-right: 50px;
+            }
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+            
+             #loadingBar {
+              position:absolute;
+              top:0px;
+              left:0px;
+              width: 100%;
+              height: 600px;
+              background-color:rgba(200,200,200,0.8);
+              -webkit-transition: all 0.5s ease;
+              -moz-transition: all 0.5s ease;
+              -ms-transition: all 0.5s ease;
+              -o-transition: all 0.5s ease;
+              transition: all 0.5s ease;
+              opacity:1;
+          }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+        @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+        }
+        </style>
+    </head>
+
+
+    <body>
+        <div id="mySidenav" class="sidenav card-columns">
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h3 class="card-header border-success text-green" id="digi_name">
+            Agumon
+          </h5>
+          <img class="card-img-top" id="digi_image" src="https://static.wikia.nocookie.net/digimon/images/6/68/Agumon_b.jpg/revision/latest?cb=20170210150934" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title text-green">Level</h4>
+            <p class="card-text" id="digi_level"></p>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title text-green">Debut</h4>
+            <p class="card-text" id="digi_debut"></p>
+          </div>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Type</h4>
+          <ul class="list-group list-group-flush" id="digi_type"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Attribute</h4>
+          <ul class="list-group list-group-flush" id="digi_attribute"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Family</h4>
+          <ul class="list-group list-group-flush" id="digi_family"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Partners</h4>
+          <ul class="list-group list-group-flush" id="digi_partners"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Voice Actors</h4>
+          <ul class="list-group list-group-flush" id="digi_va"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Cards</h4>
+          <ul class="list-group list-group-flush" id="digi_cards"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Variations</h4>
+          <ul class="list-group list-group-flush" id="digi_variations"></ul>
+        </div>
+        <div class="card text-center text-white bg-dark mb-3 border-success" >
+          <h4 class="card-header border-success text-green">Groups</h4>
+          <ul class="list-group list-group-flush" id="digi_groups"></ul>
+        </div>
+        <div id="accordion">
+          <div class="card text-center text-white bg-dark mb-3 border-success" >
+            <div class="card-header border-success" id="headingOne">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Description
+                </button>
+              </h5>
+            </div>
+        
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+              <div class="card-body" id="digi_description">
+                Agumon is a Reptile Digimon. It has grown up and become able to walk on two legs, and has an appearance like a tiny dinosaur. Because it is still on the way to adulthood, its power is low, but as its personality is quite ferocious, it doesn't understand fear. It has grown hard, sharp claws on both its hands and feet, and demonstrates its power in battle. It is also a being that foretells Digivolution to a great and powerful Digimon.
+              </div>
+            </div>
+          </div>
+          <div class="card text-center text-white bg-dark mb-3 border-success" >
+            <div class="card-header border-success" id="headingTwo">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Attacks
+                </button>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+              <ul class="list-group list-group-flush" id="digi_attacks"></ul>
+            </div>
+          </div>
+        </div>
+    </div>
+        <div class="card text-white bg-dark mb-3" style="height: 100%">
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-10 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select digimon(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  value : []
+              };
+
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      showDigi(true,arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+                   
+                  
+                    function addValues() {
+                        // clear the current value options and add the selected attribute values
+                        // tom-select handles duplicates
+                        let selectedProperty = 'id';
+                        valueControl.clear();
+                        valueControl.clearOptions();
+                        filter['value'] = []
+                            for (let each in allNodes) {
+                                valueControl.addOption({
+                                    id:allNodes[each][selectedProperty],
+                                    title:allNodes[each][selectedProperty]
+                                })
+                            }
+                    }
+
+
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      valueControl.clear();
+
+                      filter = {
+                          value : []
+                      }
+
+                      filterHighlight({nodes: []})
+
+                  }
+
+                  function updateDigiPane(node){
+                    if(!(node in digi_data))
+                      return;
+                    let name = digi_data[node]['name'];
+                    if(digi_data[node]['name_ja']){
+                        name += "( "+digi_data[node]['name_ja']+" ";
+                        name += digi_data[node]['name_ja_romanized']
+                        name += " )"
+                    }
+                    document.getElementById('digi_name').innerHTML = name;
+                    document.getElementById('digi_description').innerHTML = digi_data[node]['description'];
+                    document.getElementById('digi_level').innerHTML = digi_data[node]['level'];
+                    document.getElementById('digi_debut').innerHTML = digi_data[node]['debut'];
+                    document.getElementById('digi_image').setAttribute('src',digi_data[node]['image']);
+
+                    document.getElementById('digi_type').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['type'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['type'][i]));
+                        document.getElementById('digi_type').appendChild(item)
+                    }
+
+                    document.getElementById('digi_attribute').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['attribute'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['attribute'][i]));
+                        document.getElementById('digi_attribute').appendChild(item)
+                    }
+
+                    document.getElementById('digi_family').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['family'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['family'][i]));
+                        document.getElementById('digi_family').appendChild(item)
+                    }
+
+                    document.getElementById('digi_va').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['voiceActors'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['voiceActors'][i]));
+                        document.getElementById('digi_va').appendChild(item)
+                    }
+
+                    document.getElementById('digi_partners').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['partners'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['partners'][i]));
+                        document.getElementById('digi_partners').appendChild(item)
+                    }
+
+                    document.getElementById('digi_cards').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['cards'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['cards'][i]));
+                        document.getElementById('digi_cards').appendChild(item)
+                    }
+
+                    document.getElementById('digi_variations').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['variations'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['variations'][i]['name']));
+                        document.getElementById('digi_variations').appendChild(item)
+                    }
+
+                    document.getElementById('digi_groups').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['groups'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.appendChild(document.createTextNode(digi_data[node]['groups'][i]['name']));
+                        document.getElementById('digi_groups').appendChild(item)
+                    }
+
+                    document.getElementById('digi_attacks').innerHTML = "";
+                    for (var i = 0; i < digi_data[node]['attacks'].length; i++){
+                        var item = document.createElement('li');
+                        item.className = 'list-group-item text-white bg-dark border-success';
+                        item.innerHTML = '<b>'+(digi_data[node]['attacks'][i]['name'])+'</b><br/><i>'+(digi_data[node]['attacks'][i]['description'])+'</i>';
+                        document.getElementById('digi_attacks').appendChild(item)
+                    }
+
+                    }
+
+
+                  function showDigi(toFit,node){
+                    if(toFit)
+                    network.focus(node)
+                            for(key in allEdges){
+                                if(allEdges[key]['to'] === node)
+                                {
+                                    filter['value'].push(allEdges[key]['from'])
+                                    
+                                }
+                                if(allEdges[key]['from'] === node)
+                                {
+                                    filter['value'].push(allEdges[key]['to'])
+                                    
+                                }
+                            }
+                            filter['value'].push(node)
+                            if(toFit)
+                            network.fit({nodes : [node],animation : true})
+                            console.log(filter['value']);
+                            filterHighlight({nodes : filter['value']});
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  nodes = new vis.DataSet(nodeList);
+
+                  // parsing and collecting nodes and edges from the python
+                  edges = new vis.DataSet(edgeList);
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+      "enabled": true,
+      "stabilization": {
+          "enabled": true,
+          "fit": true,
+          "iterations": 10,
+          "onlyDynamicEdges": false,
+          "updateInterval": 1
+      }
+  }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                
+                    network.on("selectNode", function (props) {
+                    let ids = props.nodes;
+                    showDigi(false,ids[0]);
+                    updateDigiPane(ids[0]);
+                    openNav();
+                    });
+                    network.on("deselectNode", function (props) {
+                    closeNav();
+                    });
+                    network.on("stabilizationProgress", function(params) {
+                      document.getElementById('loadingBar').removeAttribute("style");
+                      var maxWidth = 496;
+                      var minWidth = 20;
+                      var widthFactor = params.iterations/params.total;
+                      var width = Math.max(minWidth,maxWidth * widthFactor);
+                      document.getElementById('bar').style.width = width + 'px';
+                     // document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                  });
+                  network.once("stabilizationIterationsDone", function() {
+                      document.getElementById('bar').style.width = '496px';
+                      document.getElementById('loadingBar').style.opacity = 0;
+                      // really clean the dom element
+                      setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      addValues();
+                      network.setOptions( { physics: false } );
+                  });
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
